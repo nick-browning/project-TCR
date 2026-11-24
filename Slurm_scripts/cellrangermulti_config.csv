@@ -1,0 +1,19 @@
+[gene-expression]
+reference,/data/projects/punim1612/references/human/refdata-gex-GRCh38-2020-A
+create-bam,true
+
+[feature]
+reference,/data/projects/punim1612/CSI/Nick-project/cellranger_multi_feature_ref.csv
+
+[libraries]
+fastq_id,fastqs,feature_types
+SRR39378243,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Gene Expression
+SRR39378303,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Gene Expression
+SRR39378304,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Gene Expression
+SRR39378305,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Gene Expression
+SRR39378306,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Gene Expression
+SRR39378242,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Antibody Capture
+SRR39378293,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Antibody Capture
+SRR39378294,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Antibody Capture
+SRR39378295,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Antibody Capture
+SRR39378296,/data/scratch/projects/punim1612/nick/sra_tools_sample_run_2,Antibody Capture
