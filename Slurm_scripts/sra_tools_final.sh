@@ -66,7 +66,36 @@ for SRR in $(cat "$ACC_LIST"); do
         echo "ERROR: expected 2 non-index reads for $SRR, found ${#reads[@]} - leaving files unrenamed" >&2
         continue
     fi
+    
+    # Second pass: R1 is the read whose first 16 bp match a 10x cell-barcode
+    # whitelist. If that is inconclusive, fall back to "shorter read is R1", but only
+    # when the lengths actually differ (150x150 runs tie, and file order is a guess).
+    wl=""
+    if call=$(python3 -I "$DETECT_R1" "$WL_DIR" "${reads[0]}" "${reads[1]}" </dev/null); then
+        IFS=$'\t' read -r r1 r2 wl hit_a hit_b <<< "$call"
+        echo "  - whitelist call ($wl, hit rates $(basename "${reads[0]}")=$hit_a $(basename "${reads[1]}")=$hit_b)"
+    elif (( lens[0] != lens[1] )); then
+        echo "  - WARNING: whitelist inconclusive for $SRR ($call), falling back to read length" >&2
+        if (( lens[1] < lens[0] )); then
+            r1=${reads[1]}; r2=${reads[0]}
+        else
+            r1=${reads[0]}; r2=${reads[1]}
+        fi
+    else
+        echo "ERROR: whitelist inconclusive and reads tie at ${lens[0]} bp for $SRR ($call) - leaving files unrenamed" >&2
+        continue
+    fi
+    echo "  - calling R1: $(basename "$r1"), R2: $(basename "$r2")"
 
+    # -n: never overwrite an existing file, had an error in a previous run where R1 was overridden by R2
+    R1_OUT=${OUTDIR}/${SRR}_S1_L001_R1_001.fastq.gz
+    R2_OUT=${OUTDIR}/${SRR}_S1_L001_R2_001.fastq.gz
+    mv -n "$r1" "$R1_OUT"
+    mv -n "$r2" "$R2_OUT"
+    if [[ -f "$r1" || -f "$r2" ]]; then
+        echo "ERROR: $R1_OUT or $R2_OUT already existed for $SRR - split files left in place, skipping library-type detection" >&2
+        continue
+    fi
 
 
 done < "$ACC_LIST"
